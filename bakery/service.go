@@ -22,7 +22,7 @@ var logger = loggo.GetLogger("bakery")
 // to check authorization.
 type Service struct {
 	location string
-	store    storage
+	store    *storage
 	checker  FirstPartyChecker
 	encoder  *boxEncoder
 	key      *KeyPair
@@ -35,9 +35,9 @@ type NewServiceParams struct {
 	// minted by the service.
 	Location string
 
-	// Store will be used to store macaroon
-	// information locally. If it is nil,
-	// an in-memory storage will be used.
+	// Store will be used to store macaroon information locally.  It may be nil,
+	// in which case macaroon root keys will not be stored and must be provided
+	// explicitly to CheckWithKey.
 	Store Storage
 
 	// Key is the public key pair used by the service for
@@ -55,13 +55,12 @@ type NewServiceParams struct {
 // NewService returns a new service that can mint new
 // macaroons and store their associated root keys.
 func NewService(p NewServiceParams) (*Service, error) {
-	if p.Store == nil {
-		p.Store = NewMemStorage()
-	}
 	svc := &Service{
 		location: p.Location,
-		store:    storage{p.Store},
 		locator:  p.Locator,
+	}
+	if p.Store != nil {
+		svc.store = &storage{p.Store}
 	}
 
 	var err error
@@ -81,7 +80,10 @@ func NewService(p NewServiceParams) (*Service, error) {
 
 // Store returns the store used by the service.
 func (svc *Service) Store() Storage {
-	return svc.store.store
+	if svc.store != nil {
+		return svc.store.store
+	}
+	return nil
 }
 
 // Location returns the service's configured macaroon location.
@@ -94,19 +96,22 @@ func (svc *Service) PublicKey() *PublicKey {
 	return &svc.key.Public
 }
 
-// Check checks that the given macaroons verify
-// correctly using the provided checker to check
-// first party caveats. The primary macaroon is in ms[0]; the discharges
-// fill the rest of the slice.
+// Check checks that the given macaroons verify correctly using the provided
+// checker to check first party caveats. The primary macaroon is in ms[0]; the
+// discharges fill the rest of the slice. The root key for the macaroon is
+// retrieved from the configured Store, it is an error to call this method with
+// a nil Store.
 //
 // If there is a verification error, it returns a VerificationError that
-// describes the error (other errors might be returned in other
-// circumstances).
+// describes the error (other errors might be returned in other circumstances).
 func (svc *Service) Check(ms macaroon.Slice, checker FirstPartyChecker) error {
 	if len(ms) == 0 {
 		return &VerificationError{
 			Reason: fmt.Errorf("no macaroons in slice"),
 		}
+	}
+	if svc.store == nil {
+		panic("bakery: Store is not specified, use CheckWithKey or create Service with a store")
 	}
 	item, err := svc.store.Get(ms[0].Id())
 	if err != nil {
@@ -120,7 +125,22 @@ func (svc *Service) Check(ms macaroon.Slice, checker FirstPartyChecker) error {
 		}
 		return errgo.Notef(err, "cannot get macaroon")
 	}
-	err = ms[0].Verify(item.RootKey, checker.CheckFirstPartyCaveat, ms[1:])
+	return svc.CheckWithKey(ms, item.RootKey, checker)
+}
+
+// CheckWithKey checks that the given macaroons verify correctly using the
+// provided root key and checker to check first party caveats. The primary
+// macaroon is in ms[0]; the discharges fill the rest of the slice.
+//
+// If there is a verification error, it returns a VerificationError that
+// describes the error (other errors might be returned in other circumstances).
+func (svc *Service) CheckWithKey(ms macaroon.Slice, rootKey []byte, checker FirstPartyChecker) error {
+	if len(ms) == 0 {
+		return &VerificationError{
+			Reason: fmt.Errorf("no macaroons in slice"),
+		}
+	}
+	err := ms[0].Verify(rootKey, checker.CheckFirstPartyCaveat, ms[1:])
 	if err != nil {
 		return &VerificationError{
 			Reason: err,
@@ -186,7 +206,7 @@ func isVerificationError(err error) bool {
 // NewMacaroon mints a new macaroon with the given id and caveats.
 // If the id is empty, a random id will be used.
 // If rootKey is nil, a random root key will be used.
-// The macaroon will be stored in the service's storage.
+// The macaroon will be stored in the service's Store if it is not nil.
 // TODO swap the first two arguments so that they're
 // in the same order as macaroon.New.
 func (svc *Service) NewMacaroon(id string, rootKey []byte, caveats []checkers.Caveat) (*macaroon.Macaroon, error) {
@@ -213,13 +233,15 @@ func (svc *Service) NewMacaroon(id string, rootKey []byte, caveats []checkers.Ca
 			return nil, errgo.Notef(err, "cannot add caveat")
 		}
 	}
-	// TODO look at the caveats for expiry time and associate
-	// that with the storage item so that the storage can
-	// garbage collect it at an appropriate time.
-	if err := svc.store.Put(m.Id(), &storageItem{
-		RootKey: rootKey,
-	}); err != nil {
-		return nil, fmt.Errorf("cannot save macaroon to store: %v", err)
+	if svc.store != nil {
+		// TODO look at the caveats for expiry time and associate
+		// that with the storage item so that the storage can
+		// garbage collect it at an appropriate time.
+		if err := svc.store.Put(m.Id(), &storageItem{
+			RootKey: rootKey,
+		}); err != nil {
+			return nil, fmt.Errorf("cannot save macaroon to store: %v", err)
+		}
 	}
 	return m, nil
 }

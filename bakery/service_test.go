@@ -23,7 +23,7 @@ var _ = gc.Suite(&ServiceSuite{})
 func (s *ServiceSuite) TestSingleServiceFirstParty(c *gc.C) {
 	p := bakery.NewServiceParams{
 		Location: "loc",
-		Store:    nil,
+		Store:    bakery.NewMemStorage(),
 		Key:      nil,
 		Locator:  nil,
 	}
@@ -41,6 +41,29 @@ func (s *ServiceSuite) TestSingleServiceFirstParty(c *gc.C) {
 	c.Assert(err, gc.IsNil)
 
 	err = service.Check(macaroon.Slice{primary}, strcmpChecker("something"))
+	c.Assert(err, gc.IsNil)
+}
+
+// TestNoStore tests a Service with a nil Store configured.
+func (s *ServiceSuite) TestNoStore(c *gc.C) {
+	p := bakery.NewServiceParams{
+		Location: "loc",
+	}
+	service, err := bakery.NewService(p)
+	c.Assert(err, gc.IsNil)
+
+	key := make([]byte, 24)
+	primary, err := service.NewMacaroon("", key, nil)
+	c.Assert(err, gc.IsNil)
+	c.Assert(primary.Location(), gc.Equals, "loc")
+	cav := checkers.Caveat{
+		Location:  "",
+		Condition: "something",
+	}
+	err = service.AddCaveat(primary, cav)
+	c.Assert(err, gc.IsNil)
+
+	err = service.CheckWithKey(macaroon.Slice{primary}, key, strcmpChecker("something"))
 	c.Assert(err, gc.IsNil)
 }
 
@@ -431,6 +454,7 @@ func newService(c *gc.C, location string, locator bakery.PublicKeyLocatorMap) *b
 
 	svc, err := bakery.NewService(bakery.NewServiceParams{
 		Location: location,
+		Store:    bakery.NewMemStorage(),
 		Key:      keyPair,
 		Locator:  locator,
 	})

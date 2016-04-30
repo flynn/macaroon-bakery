@@ -66,7 +66,9 @@ func (*DischargeSuite) TestDischargeAllManyDischarges(c *gc.C) {
 }
 
 func (*DischargeSuite) TestDischargeAllLocalDischarge(c *gc.C) {
-	svc, err := bakery.NewService(bakery.NewServiceParams{})
+	svc, err := bakery.NewService(bakery.NewServiceParams{
+		Store: bakery.NewMemStorage(),
+	})
 	c.Assert(err, gc.IsNil)
 
 	clientKey, err := bakery.GenerateKey()
