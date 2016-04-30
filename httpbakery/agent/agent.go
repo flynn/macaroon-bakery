@@ -19,8 +19,8 @@ import (
 	"github.com/juju/loggo"
 	"gopkg.in/errgo.v1"
 
-	"gopkg.in/macaroon-bakery.v1/bakery"
-	"gopkg.in/macaroon-bakery.v1/httpbakery"
+	"github.com/flynn/macaroon-bakery/bakery"
+	"github.com/flynn/macaroon-bakery/httpbakery"
 )
 
 var logger = loggo.GetLogger("httpbakery.agent")

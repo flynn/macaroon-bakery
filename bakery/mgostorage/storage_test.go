@@ -9,9 +9,9 @@ import (
 	"gopkg.in/macaroon.v1"
 	"gopkg.in/mgo.v2"
 
-	"gopkg.in/macaroon-bakery.v1/bakery"
-	"gopkg.in/macaroon-bakery.v1/bakery/checkers"
-	"gopkg.in/macaroon-bakery.v1/bakery/mgostorage"
+	"github.com/flynn/macaroon-bakery/bakery"
+	"github.com/flynn/macaroon-bakery/bakery/checkers"
+	"github.com/flynn/macaroon-bakery/bakery/mgostorage"
 )
 
 type StorageSuite struct {

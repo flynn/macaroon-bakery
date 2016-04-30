@@ -7,7 +7,7 @@ import (
 	jc "github.com/juju/testing/checkers"
 	gc "gopkg.in/check.v1"
 
-	"gopkg.in/macaroon-bakery.v1/bakery"
+	"github.com/flynn/macaroon-bakery/bakery"
 )
 
 type KeysSuite struct{}

@@ -5,6 +5,6 @@ It holds higher level operations for building systems with macaroons.
 
 For documentation, see:
 
-- http://godoc.org/gopkg.in/macaroon-bakery.v1/bakery
-- http://godoc.org/gopkg.in/macaroon-bakery.v1/httpbakery
-- http://godoc.org/gopkg.in/macaroon-bakery.v1/bakery/checkers
+- http://godoc.org/github.com/flynn/macaroon-bakery/bakery
+- http://godoc.org/github.com/flynn/macaroon-bakery/httpbakery
+- http://godoc.org/github.com/flynn/macaroon-bakery/bakery/checkers

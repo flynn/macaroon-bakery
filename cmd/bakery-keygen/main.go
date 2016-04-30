@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"gopkg.in/macaroon-bakery.v1/bakery"
+	"github.com/flynn/macaroon-bakery/bakery"
 )
 
 func main() {

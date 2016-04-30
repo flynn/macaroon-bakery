@@ -7,9 +7,9 @@ import (
 
 	"gopkg.in/errgo.v1"
 
-	"gopkg.in/macaroon-bakery.v1/bakery"
-	"gopkg.in/macaroon-bakery.v1/bakery/checkers"
-	"gopkg.in/macaroon-bakery.v1/httpbakery"
+	"github.com/flynn/macaroon-bakery/bakery"
+	"github.com/flynn/macaroon-bakery/bakery/checkers"
+	"github.com/flynn/macaroon-bakery/httpbakery"
 )
 
 type targetServiceHandler struct {

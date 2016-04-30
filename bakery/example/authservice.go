@@ -3,9 +3,9 @@ package main
 import (
 	"net/http"
 
-	"gopkg.in/macaroon-bakery.v1/bakery"
-	"gopkg.in/macaroon-bakery.v1/bakery/checkers"
-	"gopkg.in/macaroon-bakery.v1/httpbakery"
+	"github.com/flynn/macaroon-bakery/bakery"
+	"github.com/flynn/macaroon-bakery/bakery/checkers"
+	"github.com/flynn/macaroon-bakery/httpbakery"
 )
 
 // authService implements an authorization service,

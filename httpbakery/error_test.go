@@ -12,7 +12,7 @@ import (
 	gc "gopkg.in/check.v1"
 	"gopkg.in/macaroon.v1"
 
-	"gopkg.in/macaroon-bakery.v1/httpbakery"
+	"github.com/flynn/macaroon-bakery/httpbakery"
 )
 
 type ErrorSuite struct{}

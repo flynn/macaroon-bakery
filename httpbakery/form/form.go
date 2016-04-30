@@ -11,7 +11,7 @@ import (
 	"gopkg.in/juju/environschema.v1"
 	"gopkg.in/juju/environschema.v1/form"
 
-	"gopkg.in/macaroon-bakery.v1/httpbakery"
+	"github.com/flynn/macaroon-bakery/httpbakery"
 )
 
 var logger = loggo.GetLogger("httpbakery.form")

@@ -12,10 +12,10 @@ import (
 	"gopkg.in/errgo.v1"
 	"gopkg.in/macaroon.v1"
 
-	"gopkg.in/macaroon-bakery.v1/bakery"
-	"gopkg.in/macaroon-bakery.v1/bakery/checkers"
-	"gopkg.in/macaroon-bakery.v1/httpbakery"
-	"gopkg.in/macaroon-bakery.v1/httpbakery/agent"
+	"github.com/flynn/macaroon-bakery/bakery"
+	"github.com/flynn/macaroon-bakery/bakery/checkers"
+	"github.com/flynn/macaroon-bakery/httpbakery"
+	"github.com/flynn/macaroon-bakery/httpbakery/agent"
 )
 
 type discharge struct {

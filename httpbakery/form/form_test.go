@@ -12,11 +12,11 @@ import (
 	"gopkg.in/juju/environschema.v1"
 	esform "gopkg.in/juju/environschema.v1/form"
 
-	"gopkg.in/macaroon-bakery.v1/bakery"
-	"gopkg.in/macaroon-bakery.v1/bakery/checkers"
-	"gopkg.in/macaroon-bakery.v1/bakerytest"
-	"gopkg.in/macaroon-bakery.v1/httpbakery"
-	"gopkg.in/macaroon-bakery.v1/httpbakery/form"
+	"github.com/flynn/macaroon-bakery/bakery"
+	"github.com/flynn/macaroon-bakery/bakery/checkers"
+	"github.com/flynn/macaroon-bakery/bakerytest"
+	"github.com/flynn/macaroon-bakery/httpbakery"
+	"github.com/flynn/macaroon-bakery/httpbakery/form"
 )
 
 type formSuite struct {

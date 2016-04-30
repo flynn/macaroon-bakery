@@ -10,10 +10,10 @@ import (
 	"github.com/juju/httprequest"
 	gc "gopkg.in/check.v1"
 
-	"gopkg.in/macaroon-bakery.v1/bakery"
-	"gopkg.in/macaroon-bakery.v1/bakery/checkers"
-	"gopkg.in/macaroon-bakery.v1/bakerytest"
-	"gopkg.in/macaroon-bakery.v1/httpbakery"
+	"github.com/flynn/macaroon-bakery/bakery"
+	"github.com/flynn/macaroon-bakery/bakery/checkers"
+	"github.com/flynn/macaroon-bakery/bakerytest"
+	"github.com/flynn/macaroon-bakery/httpbakery"
 )
 
 type suite struct {
